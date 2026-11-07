@@ -34,47 +34,43 @@ FetchContent_MakeAvailable(stb)
 
 find_package(OpenGL REQUIRED)
 
-add_executable(sphere
-  src/sphere.cpp
-  src/mesh.cpp
-  src/shader.cpp
-  src/opengl_loader.cpp
-)
-
-add_executable(cube
-  src/cube.cpp
-  src/mesh.cpp
-  src/shader.cpp
-  src/opengl_loader.cpp
+add_executable(robot_arm
+    src/main.cpp
+    src/geometry.cpp
+    src/mesh.cpp
+    src/shader.cpp
+    src/opengl_loader.cpp
 )
 
 # Tell compiler where to find gl.h
-foreach(target sphere cube)
-    target_include_directories(${target} PRIVATE
-        include
-        ${stb_SOURCE_DIR}
-    )
+target_include_directories(robot_arm PRIVATE
+    include
+    ${stb_SOURCE_DIR}
+)
 
-    target_compile_features(${target} PRIVATE cxx_std_17)
+target_compile_features(robot_arm PRIVATE cxx_std_17)
 
-    target_link_libraries(${target}
-        PRIVATE
-            SFML::Window
-            SFML::System
-            glm::glm
-            OpenGL::GL
-    )
+target_link_libraries(robot_arm
+    PRIVATE
+        SFML::Window
+        SFML::System
+        glm::glm
+        OpenGL::GL
+)
 
-    add_custom_command(TARGET ${target} POST_BUILD
-        COMMAND ${CMAKE_COMMAND} -E make_directory "$<TARGET_FILE_DIR:${target}>/shaders"
-        COMMAND ${CMAKE_COMMAND} -E copy_if_different
-            "${CMAKE_CURRENT_SOURCE_DIR}/src/mesh.vert"
-            "$<TARGET_FILE_DIR:${target}>/shaders/mesh.vert"
-        COMMAND ${CMAKE_COMMAND} -E copy_if_different
-            "${CMAKE_CURRENT_SOURCE_DIR}/src/mesh.frag"
-            "$<TARGET_FILE_DIR:${target}>/shaders/mesh.frag"
-        VERBATIM
-    )
-endforeach()
+# Put the shaders and textures next to the executable
+add_custom_command(TARGET robot_arm POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E make_directory "$<TARGET_FILE_DIR:robot_arm>/shaders"
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different
+        "${CMAKE_CURRENT_SOURCE_DIR}/src/mesh.vert"
+        "$<TARGET_FILE_DIR:robot_arm>/shaders/mesh.vert"
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different
+        "${CMAKE_CURRENT_SOURCE_DIR}/src/mesh.frag"
+        "$<TARGET_FILE_DIR:robot_arm>/shaders/mesh.frag"
+    COMMAND ${CMAKE_COMMAND} -E copy_directory
+        "${CMAKE_CURRENT_SOURCE_DIR}/assets"
+        "$<TARGET_FILE_DIR:robot_arm>/assets"
+    VERBATIM
+)
 
-set_property(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} PROPERTY VS_STARTUP_PROJECT cube)
+set_property(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} PROPERTY VS_STARTUP_PROJECT robot_arm)

@@ -1,3 +1,9 @@
+# Note
+The homework 3 implementation was built on top of this template repo so there are extra additions to complete that portion.
+I noticed that during the movement of the robot arm, sometimes the ligaments can clip through each other, so that is a known caveat.
+
+I also removed the sphere.cpp and cube.cpp files as they were not needed. However some code was reused from sphere.cpp in geometry.cpp (ln 79: makeSphere()).
+
 # CMake SFML Project Template (with 3D OpenGL)
 
 Use this template repository for SFML windowing and input with 3D rendering handled by OpenGL.
